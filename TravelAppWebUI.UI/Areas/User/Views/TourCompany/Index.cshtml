@@ -1,0 +1,381 @@
+﻿@using TravalAppWebUI.Core.DTO;
+@model List<TourCompanyDTO>
+@{
+    ViewData["Title"] = "Tur Şirketi";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Tur Şirketi</h3>
+       
+    </div>
+    <div class="card-body">
+
+        <table id="tblTurSirketleri" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">ID</th>
+                    <th>Şirket Adı</th>
+                    <th>Email</th>
+                    <th>Adres</th>
+                    <th>Tel</th>
+                    <th style="width:20%"></th>
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model[i].Name</td>
+                            <td>@Model[i].Email</td>
+                            <td>@Model[i].Adress</td>
+                            <td>@Model[i].PhoneNumber</td>
+                           
+                        </tr>
+
+                    }
+                }
+
+
+
+            </tbody>
+        </table>
+
+
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal-YeniTurSirketi">
+    <div class="modal-dialog modal-YeniTurSirketi">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">YeniTurSirketi</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurSirketiAd_Add">Şirket Adı</label>
+                    <input type="text" class="form-control" id="txtTurSirketiAd_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurSirketiAd_Add">Tel. No.</label>
+                    <input type="tel" class="form-control" id="txtTurSirketiNo_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurSirketiAd_Add">Email</label>
+                    <input type="email" class="form-control" id="txtTurSirketiEmail_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurSirketiAd_Add">Adres</label>
+                    <input type="text" class="form-control" id="txtTurSirketiAdres_Add">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnAddTurSirketi">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-DetayTurSirketi">
+    <div class="modal-dialog modal-DetayTurSirketi">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"> Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurSirketiAd_Update">Şirket Adı</label>
+                    <input type="text" class="form-control" id="txtTurSirketiAd_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurSirketiNo_Update">Tel. No.</label>
+                    <input type="tel" class="form-control" id="txtTurSirketiNo_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurSirketiEmail_Update">Email</label>
+                    <input type="email" class="form-control" id="txtTurSirketiEmail_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurSirketiAdres_Update">Adres</label>
+                    <input type="text" class="form-control" id="txtTurSirketiAdres_Update">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnUpdateTurSirketi">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<input type="hidden" id="hdnUpdateTourCompanyGUID" />
+<script>
+    $(function () {
+        $("#tblTurSirketleri").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblTurSirketleri_wrapper .col-md-6:eq(0)');
+
+        $('#btnAddTurSirketi').click(function () {
+
+            var tourCompany = new Object();
+
+            tourCompany.Name = $('#txtTurSirketiAd_Add').val();
+            tourCompany.PhoneNumber = $('#txtTurSirketiNo_Add').val();
+            tourCompany.Email = $('#txtTurSirketiEmail_Add').val();
+            tourCompany.Adress = $('#txtTurSirketiAdres_Add').val();
+
+            $.ajax({
+                url: '/Admin/AddTourCompany',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { tourCompany },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Tur Şirketi Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                            Hatalar += ErrorInfo.Error[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnTourCompanyDetail').click(function () {
+            $('#txtTurSirketiAd_Update').val('');
+            var tourCompanyGUID = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/TourCompany/' + tourCompanyGUID,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+
+
+                        $('#btnUpdateTurSirketi').attr('data-guid', tourCompanyGUID)
+
+                        $('#txtTurSirketiAd_Update').val(response.data.Name);
+                        $('#txtTurSirketiNo_Update').val(response.data.PhoneNumber);
+                        $('#txtTurSirketiEmail_Update').val(response.data.Email);
+                        $('#txtTurSirketiAdres_Update').val(response.data.Adress);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        if (ErrorInfo.Error != null) {
+                            for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                                Hatalar += ErrorInfo.Error[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+
+        $('#btnUpdateTurSirketi').click(function () {
+            var tourCompany = new Object();
+
+            tourCompany.Name = $('#txtTurSirketiAd_Update').val();
+            tourCompany.PhoneNumber = $('#txtTurSirketiNo_Update').val();
+            tourCompany.Email = $('#txtTurSirketiEmail_Update').val();
+            tourCompany.Adress = $('#txtTurSirketiAdres_Update').val();
+            tourCompany.Guid = $(this).attr('data-guid');
+
+            $.ajax({
+                url: '/Admin/UpdateTourCompany',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { tourCompany },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Tur Şirketi Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                            Hatalar += ErrorInfo.Error[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnTurSirketiSil').click(function () {
+            var tourCompanyGUID = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "'Tur Şirketini Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveTourCompany/' + tourCompanyGUID,
+                        type: 'POST',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Tur Şirketi Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var ErrorInfo = response.ErrorInfo;
+                                var Hatalar = '';
+                                for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                                    Hatalar += ErrorInfo.Error[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: ErrorInfo.ErrorDescription,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+            })
+        });
+
+    })
+
+</script>

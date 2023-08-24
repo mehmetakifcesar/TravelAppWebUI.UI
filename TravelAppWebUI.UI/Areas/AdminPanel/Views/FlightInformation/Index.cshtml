@@ -1,0 +1,415 @@
+﻿@using TravalAppWebUI.Core.DTO;
+@model List<FlightInformationDTO>
+@{
+    ViewData["Title"] = "Uçuş Bilgileri İşlemleri";
+    Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
+}
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Uçuş Bilgileri</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-YeniUcusBilgileri">Ekle</button>
+
+        </div>
+    </div>
+    <div class="card-body">
+
+        <table id="tblUcusBilgileri" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Havayolu Şirketi</th>
+                    <th>Kalkış Yeri</th>
+                    <th>Varış Yeri</th>
+                    <th>Kalkış Saati</th>
+                    <th>Varış Saati</th>
+                    <th>Fiyatı</th>
+                    <th style="width:20%"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model[i].Airline</td>
+                            <td>@Model[i].Origin</td>
+                            <td>@Model[i].Destination</td>
+                            <td>@Model[i].DepartureDate</td>
+                            <td>@Model[i].ArrivalDate</td>
+                            <td>@Model[i].Price</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info btnFlightInformationDetail" data-guid=@Model[i].Guid data-toggle="modal" data-target="#modal-DetayUcusBilgileri">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnUcusBilgileriSil" data-guid=@Model[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                       
+                    }
+                }
+
+
+
+            </tbody>
+        </table>
+
+
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal-YeniUcusBilgileri">
+    <div class="modal-dialog modal-YeniUcusBilgileri">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yeni Uçuş Bilgileri</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUcusBilgileriAd_Add">Havayolu Şirketi</label>
+                    <input type="text" class="form-control" id="txtUcusBilgileriAd_Add">
+                </div>
+            </div>   <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUcusBilgileriOrg_Add">Kalkış Yeri</label>
+                    <input type="text" class="form-control" id="txtUcusBilgileriOrg_Add">
+                </div>
+            </div>   <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUcusBilgileriDest_Add">Varış Yeri</label>
+                    <input type="text" class="form-control" id="txtUcusBilgileriDest_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    
+                    <label for="txtUcusBilgileriDT_Add">Kalkış Tarihi</label>
+                    <input type="datetime" class="form-control" id="txtUcusBilgileriDT_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    
+                    <label for="txtUcusBilgileriAT_Add">Varış Tarihi</label>
+                    <input type="datetime" class="form-control" id="txtUcusBilgileriAT_Add">
+                </div>
+            </div>   <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUcusBilgileriPrc_Add">Fiyatı</label>
+                    <input type="number" class="form-control" id="txtUcusBilgileriPrc_Add">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnAddUcusBilgileri">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-DetayUcusBilgileri">
+    <div class="modal-dialog modal-DetayUcusBilgileri">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUcusBilgileriAd_Update">Havayolu Şirketi</label>
+                    <input type="text" class="form-control" id="txtUcusBilgileriAd_Update">
+                </div>
+            </div>   <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUcusBilgileriOrg_Update">Kalkış Yeri</label>
+                    <input type="text" class="form-control" id="txtUcusBilgileriOrg_Update">
+                </div>
+            </div>   <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUcusBilgileriDest_Update">Varış Yeri</label>
+                    <input type="text" class="form-control" id="txtUcusBilgileriDest_Update">
+                </div>
+            </div>   <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUcusBilgileriDT_Update">Kalkış Tarihi</label>
+                    <input type="text" class="form-control" id="txtUcusBilgileriDT_Update">
+                </div>
+            </div>   <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUcusBilgileriAT_Update">Varış Tarihi</label>
+                    <input type="text" class="form-control" id="txtUcusBilgileriAT_Update">
+                </div>
+            </div>   <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtUcusBilgileriPrc_Update">Fiyatı</label>
+                    <input type="text" class="form-control" id="txtUcusBilgileriPrc_Update">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnUpdateUcusBilgileri">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<input type="hidden" id="hdnUpdateFlightInformationGUID" />
+<script>
+    $(function () {
+        $("#tblUcusBilgileri").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblUcusBilgileri_wrapper .col-md-6:eq(0)');
+
+        $('#btnAddUcusBilgileri').click(function () {
+
+            var flightInformation = new Object();
+
+            flightInformation.Airline = $('#txtUcusBilgileriAd_Add').val();
+            flightInformation.Origin = $('#txtUcusBilgileriOrg_Add').val();
+            flightInformation.Destination = $('#txtUcusBilgileriDest_Add').val();
+            flightInformation.DepartureDate = $('#txtUcusBilgileriDT_Add').val();
+            flightInformation.ArrivalDate = $('#txtUcusBilgileriAT_Add').val();
+            flightInformation.Price = $('#txtUcusBilgileriPrc_Add').val();
+
+            $.ajax({
+                url: '/Admin/AddFlightInformation',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { flightInformation },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Uçuş Bilgileri Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                            Hatalar += ErrorInfo.Error[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnFlightInformationDetail').click(function () {
+            $('#txtUcusBilgileriAd_Update').val('');
+            var flightInformationGUID = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/FlightInformation/' + flightInformationGUID,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+
+
+                        $('#btnUpdateUcusBilgileri').attr('data-guid', flightInformationGUID)
+
+                        $('#txtUcusBilgileriAd_Update').val(response.data.Airline);
+                        $('#txtUcusBilgileriOrg_Update').val(response.data.Origin);
+                        $('#txtUcusBilgileriDest_Update').val(response.data.Destination);
+                        $('#txtUcusBilgileriDT_Update').val(response.data.DepartureDate);
+                        $('#txtUcusBilgileriAT_Update').val(response.data.ArrivalDate);
+                        $('#txtUcusBilgileriPrc_Update').val(response.data.Price);
+                        
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        if (ErrorInfo.Error != null) {
+                            for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                                Hatalar += ErrorInfo.Error[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+
+        $('#btnUpdateUcusBilgileri').click(function () {
+            var flightInformation = new Object();
+
+            flightInformation.Airline = $('#txtUcusBilgileriAd_Update').val();
+            flightInformation.Origin = $('#txtUcusBilgileriOrg_Update').val();
+            flightInformation.Destination = $('#txtUcusBilgileriDest_Update').val();
+            flightInformation.DepartureDate = $('#txtUcusBilgileriDT_Update').val();
+            flightInformation.ArrivalDate = $('#txtUcusBilgileriAT_Update').val();
+            flightInformation.Price = $('#txtUcusBilgileriPrc_Update').val();
+            flightInformation.Guid = $(this).attr('data-guid');
+
+            $.ajax({
+                url: '/Admin/UpdateFlightInformation',
+                type: 'post',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { flightInformation },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Uçuş Bilgileri Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                            Hatalar += ErrorInfo.Error[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnUcusBilgileriSil').click(function () {
+            var flightInformationGUID = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "Uçuş Bilgilerini Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveFlightInformation/' + flightInformationGUID,
+                        type: 'post',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Uçuş Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var ErrorInfo = response.ErrorInfo;
+                                var Hatalar = '';
+                                for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                                    Hatalar += ErrorInfo.Error[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: ErrorInfo.ErrorDescription,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+            })
+        });
+
+    })
+
+</script>

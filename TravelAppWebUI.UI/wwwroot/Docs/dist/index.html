@@ -1,0 +1,406 @@
+@using TravalAppWebUI.Core.DTO;
+@model List<TourGuideDTO>
+@{
+    ViewData["Title"] = "Tur Rehberi İşlemleri";
+    Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
+}
+<head>   <script src="/Docs/plugins/jquery/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    
+    <link rel="stylesheet" href="/Docs/plugins/fontawesome-free/css/all.min.css">
+    
+    <link rel="stylesheet" href="/Docs/dist/css/adminlte.min.css?v=3.2.0">
+        <!-- DataTables -->
+        <link rel="stylesheet" href="/Docs/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+        <link rel="stylesheet" href="/Docs/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+        <link rel="stylesheet" href="/Docs/plugins/datatables-buttons/css/buttons.bootstrap4.min.css"><script src="/Docs/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <script src="/Docs/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="/Docs/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+        <script src="/Docs/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="/Docs/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+        <script src="/Docs/plugins/jszip/jszip.min.js"></script>
+        <script src="/Docs/plugins/pdfmake/pdfmake.min.js"></script>
+        <script src="/Docs/plugins/pdfmake/vfs_fonts.js"></script>
+        <script src="/Docs/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+        <script src="/Docs/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+        <script src="/Docs/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    </script><script src="/Docs/plugins/datatables/jquery.dataTables.min.js"></script></head>
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Tur Rehberleri</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-YeniTurRehberi">Ekle</button>
+
+        </div>
+    </div>
+    <div class="card-body">
+
+        <table id="tblTurRehberleri" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Tur Rehberi</th>
+                    <th style="width:20%"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model[i].FirstName</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-infobtnTourGuideDetail" data-guid=@Model[i].Guid data-toggle="modal" data-target="#modal-DetayTurRehberi">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnTurRehberiSil" data-guid=@Model[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model[i].LastName</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-infobtnTourGuideDetail" data-guid=@Model[i].Guid data-toggle="modal" data-target="#modal-DetayTurRehberi">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnTurRehberiSil" data-guid=@Model[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model[i].Email</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-infobtnTourGuideDetail" data-guid=@Model[i].Guid data-toggle="modal" data-target="#modal-DetayTurRehberi">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnTurRehberiSil" data-guid=@Model[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model[i].PhoneNumber</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-infobtnTourGuideDetail" data-guid=@Model[i].Guid data-toggle="modal" data-target="#modal-DetayTurRehberi">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnTurRehberiSil" data-guid=@Model[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+
+
+
+            </tbody>
+        </table>
+
+
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal-YeniTurRehberi">
+    <div class="modal-dialog modal-YeniTurRehberi">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yeni Tur Rehberi</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurRehberiAd_Add">Tur Rehberi Adı</label>
+                    <input type="text" class="form-control" id="txtTurRehberiAd_Add">
+                </div>
+            </div><div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurRehberiAd_Add">Tur Rehberi Soyadı</label>
+                    <input type="text" class="form-control" id="txtTurRehberiAd_Add">
+                </div>
+            </div><div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurRehberiAd_Add">Tur Rehberi Email</label>
+                    <input type="text" class="form-control" id="txtTurRehberiAd_Add">
+                </div>
+            </div><div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurRehberiAd_Add">Tur Rehberi Telefon Numarası</label>
+                    <input type="text" class="form-control" id="txtTurRehberiAd_Add">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnAddTurRehberi">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-DetayTurRehberi">
+    <div class="modal-dialog modal-DetayTurRehberi">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tur Rehberi Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurRehberiAd_Add">Tur Rehberi Adı</label>
+                    <input type="text" class="form-control" id="txtTur RehberiAd_Update">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnUpdateTurRehberi">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<input type="hidden" id="hdnUpdateTourGuideGUID" />
+<script>
+    $(function () {
+        $("#tblTurRehberleri").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblTurRehberleri_wrapper .col-md-6:eq(0)');
+
+        $('#btnAddTurRehberi').click(function () {
+
+            var Tour = new Object();
+
+            Tour.Name = $('#txtTurRehberiAd_Add').val();
+
+            $.ajax({
+                url: '/Admin/AddTourGuide',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { Tour },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Tur Rehberi Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                            Hatalar += ErrorInfo.Error[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnTourGuideDetail').click(function () {
+            $('#txtTurRehberiAd_Update').val('');
+            var TourGuideGUID = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/TurRehberi/' + TourGuideGUID,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+
+
+                        $('#btnUpdateTurRehberi').attr('data-guid', TourGUID)
+
+                        $('#txtTurRehberiAd_Update').val(response.data.Name);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        if (ErrorInfo.Error != null) {
+                            for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                                Hatalar += ErrorInfo.Error[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+
+        $('#btnUpdateTurRehberi').click(function () {
+            var Tour = new Object();
+
+            Tour.Name = $('#txtTurRehberiAd_Update').val();
+            //Tour.Guid = $('#hdnUpdateTourGUID').val();
+            //Tour.Guid =sessionStorage.getItem('updatedTourGUID');
+            Tour.Guid = $(this).attr('data-guid');
+
+            $.ajax({
+                url: '/Admin/UpdateTourGuide',
+                type: 'post',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { Tour },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Tur Rehberi Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                            Hatalar += ErrorInfo.Error[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnTurRehberiSil').click(function () {
+            var TourGUID = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "'Tur Rehberini Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveTourGuide/' + TourGUID,
+                        type: 'post',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Tur Rehberi Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var ErrorInfo = response.ErrorInfo;
+                                var Hatalar = '';
+                                for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                                    Hatalar += ErrorInfo.Error[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: ErrorInfo.ErrorDescription,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "Error OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+               
+    
+            })
+        });
+
+    })
+   
+    
+    

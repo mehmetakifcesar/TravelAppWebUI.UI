@@ -1,0 +1,389 @@
+﻿@using TravalAppWebUI.Core.DTO;
+@model List<ReservationDTO>
+@{
+    ViewData["Title"] = "Rezervasyon İşlemleri";
+    Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
+}
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Rezervasyonlar</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#modal-YeniRezervasyon">Ekle</button>
+
+        </div>
+    </div>
+    <div class="card-body">
+
+        <table id="tblRezervasyonlar" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Kullanıcı Numarası</th>
+                    <th>Rezervasyon Tarihi</th>
+                    <th>Kişi Sayısı</th>
+                    <th>Fiyat</th>
+                    <th style="width:20%"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model[i].UserID</td>
+                            <td>@Model[i].ReservationDate</td>
+                            <td>@Model[i].NumberOfTravelers</td>
+                            <td>@Model[i].Price</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info btnReservationDetail" data-guid=@Model[i].Guid data-toggle="modal" data-target="#modal-DetayRezervasyon">Güncelle</button>
+                                    <button type="button" class="btn btn-danger btnRezervasyonSil" data-guid=@Model[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+
+                    }
+                }
+
+
+
+            </tbody>
+        </table>
+
+
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal-YeniRezervasyon">
+    <div class="modal-dialog modal-YeniRezervasyon">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yeni Rezervasyon</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtRezervasyonID_Add">Kullanıcı Numarası</label>
+                    <input type="datetime" class="form-control" id="txtRezervasyonID_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtRezervasyonDT_Add">Tarih ve Saat</label>
+                    <input type="datetime" class="form-control" id="txtRezervasyonDT_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtRezervasyonNOT_Add">Kişi Sayısı</label>
+                    <input type="number" class="form-control" id="txtRezervasyonNOT_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtRezervasyonPrc_Add">Fiyat</label>
+                    <input type="number" class="form-control" id="txtRezervasyonPrc_Add">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnAddRezervasyon">Kaydet</button>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
+
+
+<div class="modal fade" id="modal-DetayRezervasyon">
+    <div class="modal-dialog modal-DetayRezervasyon">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Rezervasyon Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtRezervasyonID_Update">Kullanıcı Numarası</label>
+                    <input type="datetime" class="form-control" id="txtRezervasyonID_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtRezervasyonDT_Update">Tarih ve Saat</label>
+                    <input type="datetime" class="form-control" id="txtRezervasyonDT_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtRezervasyonNOT_Update">Kişi Sayısı</label>
+                    <input type="number" class="form-control" id="txtRezervasyonNOT_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtRezervasyonPrc_Update">Fiyat</label>
+                    <input type="number" class="form-control" id="txtRezervasyonPrc_Update">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnUpdateRezervasyon">Kaydet</button>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
+
+<input type="hidden" id="hdnUpdateReservationGUID" />
+<script>
+    $(function () {
+        $("#tblRezervasyonlar").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblRezervasyonlar_wrapper .col-md-6:eq(0)');
+
+        $('#btnAddRezervasyon').click(function () {
+
+            var Reservation = new Object();
+
+            Reservation.UserID = $('#txtRezervasyonID_Add').val();
+            Reservation.ReservationDate = $('#txtRezervasyonDT_Add').val();
+            Reservation.NumberOfTravelers = $('#txtRezervasyonNOT_Add').val();
+            Reservation.Price = $('#txtRezervasyonPrc_Add').val();
+
+            $.ajax({
+                url: '/Admin/AddReservation',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { Reservation },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Rezervasyon Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                            Hatalar += ErrorInfo.Error[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnReservationDetail').click(function () {
+            $('#txtRezervasyonAd_Update').val('');
+            var reservationGUID = $(this).attr('data-guid');
+            $.ajax({
+                url: '/Admin/Reservation/' + reservationGUID,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+
+
+                        $('#btnUpdateRezervasyon').attr('data-guid', reservationGUID)
+
+                        $('#txtRezervasyonID_Update').val(response.data.UserID);
+                        $('#txtRezervasyonDT_Update').val(response.data.ReservationDate);
+                        $('#txtRezervasyonNOT_Update').val(response.data.NumberOfTravelers);
+                        $('#txtRezervasyonPrc_Update').val(response.data.Price);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        if (ErrorInfo.Error != null) {
+                            for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                                Hatalar += ErrorInfo.Error[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+
+        $('#btnUpdateRezervasyon').click(function () {
+            var Reservation = new Object();
+
+            Reservation.UserID = $('#txtRezervasyonID_Update').val();
+            Reservation.ReservationDate = $('#txtRezervasyonDT_Update').val();
+            Reservation.NumberOfTravelers = $('#txtRezervasyonNOT_Update').val();
+            Reservation.Price = $('#txtRezervasyonPrc_Update').val();
+            Reservation.Guid = $(this).attr('data-guid');
+
+            $.ajax({
+                url: '/Admin/UpdateReservation',
+                type: 'post',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { Reservation },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Rezervasyon Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                            Hatalar += ErrorInfo.Error[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnRezervasyonSil').click(function () {
+            var reservationGUID = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "'Rezervasyonu Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveReservation/' + reservationGUID,
+                        type: 'post',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Rezervasyon Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var ErrorInfo = response.ErrorInfo;
+                                var Hatalar = '';
+                                for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                                    Hatalar += ErrorInfo.Error[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: ErrorInfo.ErrorDescription,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+            })
+        });
+
+    })
+
+</script>

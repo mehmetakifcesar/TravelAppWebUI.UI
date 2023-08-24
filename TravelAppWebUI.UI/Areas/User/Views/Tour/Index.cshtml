@@ -1,0 +1,396 @@
+﻿@using TravalAppWebUI.Core.DTO;
+@model List<TourDTO>
+@{
+    ViewData["Title"] = "Tur İşlemleri";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Turlar</h3>
+        
+    </div>
+    <div class="card-body">
+
+        <table id="tblTurlar" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">ID</th>
+                    <th>Tur Adı</th>
+                    <th>Başlangıç Tarihi</th>
+                    <th>Bitiş Tarihi</th>
+                    <th>Açıklama</th>
+                    <th>Fiyat</th>
+                    
+                    <th style="width:20%"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model[i].Name</td>
+                            <td>@Model[i].StartingDate</td>
+                            <td>@Model[i].EndingDate</td>
+                            <td>@Model[i].Description</td>
+                            <td>@Model[i].Price</td>
+                            <td>
+                             
+                            </td>
+                        </tr>
+                    }
+                }
+
+
+
+            </tbody>
+        </table>
+
+
+    </div>
+
+</div>
+
+<div class="modal fade" id="modal-YeniTur">
+    <div class="modal-dialog modal-YeniTur">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yeni Tur</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurAd_Add">Tur Adı</label>
+                    <input type="text" class="form-control" id="txtTurAd_Add">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurSd_Add">Başlangıç Tarihi</label>
+                    <input type="datetime" class="form-control" id="txtTurSd_Add">
+                </div>
+            </div> <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurEd_Add">Bitiş Tarihi</label>
+                    <input type="datetime" class="form-control" id="txtTurEd_Add">
+                </div>
+            </div> <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurDsc_Add">Açıklama</label>
+                    <input type="text" class="form-control" id="txtTurDsc_Add">
+                </div>
+            </div> <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurPrc_Add">Fiyat</label>
+                    <input type="number" class="form-control" id="txtTurPrc_Add">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnAddTur">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="modal-DetayTur">
+    <div class="modal-dialog modal-DetayTur">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tur Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurAd_Update">Tur Adı</label>
+                    <input type="text" class="form-control" id="txtTurAd_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurSd_Update">Başlangıç Tarihi</label>
+                    <input type="datetime" class="form-control" id="txtTurSd_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurEd_Update">Bitiş Tarihi</label>
+                    <input type="datetime" class="form-control" id="txtTurEd_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurDsc_Update">Açıklama</label>
+                    <input type="text" class="form-control" id="txtTurDsc_Update">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtTurPrc_Update">Fiyat</label>
+                    <input type="number" class="form-control" id="txtTurPrc_Update">
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnUpdateTur">Güncelle</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<input type="hidden" id="hdnUpdateTourGUID" />
+<script>
+    $(function () {
+        $("#tblTurlar").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblTurlar_wrapper .col-md-6:eq(0)');
+
+        $('#btnAddTur').click(function () {
+
+            var tour = new Object();
+
+            tour.Name = $('#txtTurAd_Add').val();
+            tour.StartingDate = $('#txtTurSd_Add').val();
+            tour.EndingDate = $('#txtTurEd_Add').val();
+            tour.Description = $('#txtTurDsc_Add').val();
+            tour.Price = $('#txtTurPrc_Add').val();
+            $.ajax({
+                url: '/Admin/AddTour',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { tour },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Tur Başarıyla Eklendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                            Hatalar += ErrorInfo.Error[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+        $('.btnTourDetail').click(function () {
+            $('#txtTurAd_Update').val('');
+            var tourGUID = $(this).attr('data-guid');
+            $.ajax({
+                url: 'Admin/Tour/' + tourGUID,
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+
+
+                        $('#btnUpdateTur').attr('data-guid', tourGUID)
+
+                        $('#txtTurAd_Update').val(response.data.Name);
+                        $('#txtTurSd_Update').val(response.data.StartingDate);
+                        $('#txtTurEd_Update').val(response.data.EndingDate);
+                        $('#txtTurDesc_Update').val(response.data.Description);
+                        $('#txtTurPrc_Update').val(response.data.Price);
+
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        if (ErrorInfo.Error != null) {
+                            for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                                Hatalar += ErrorInfo.Error[i] + '</br>';
+                            }
+                        }
+
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+
+        });
+
+
+        $('#btnUpdateTur').click(function () {
+            var tour = new Object();
+
+            tour.Name = $('#txtTurAd_Update').val();
+            tour.StartingDate = $('#txtTurSd_Update').val();
+            tour.EndingDate = $('#txtTurEd_Update').val();
+            tour.Description = $('#txtTurDsc_Update').val();
+            tour.Price = $('#txtTurPrc_Update').val();
+            tour.Guid = $(this).attr('data-guid');
+
+            $.ajax({
+                url: '/Admin/UpdateTour',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: { tour },
+                success: function (response) {
+                    if (response.success) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Tur Başarıyla Güncellendi',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+
+                        var ErrorInfo = response.ErrorInfo;
+                        var Hatalar = '';
+                        for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                            Hatalar += ErrorInfo.Error[i] + '</br>';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: ErrorInfo.ErrorDescription,
+                            html: Hatalar
+                        })
+
+
+                    }
+                },
+                error: function (err) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                    })
+                }
+            });
+
+        });
+
+
+        $('.btnTurSil').click(function () {
+            var tourGUID = $(this).attr('data-guid');
+
+            Swal.fire({
+                title: 'UYARI!',
+                text: "'Turu Silmek İstediğinizden Emin misiniz?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet!',
+                cancelButtonText: 'Hayır',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveTour/' + tourGUID,
+                        type: 'post',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Tur Başarıyla Silindi',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+
+                                var ErrorInfo = response.ErrorInfo;
+                                var Hatalar = '';
+                                for (var i = 0; i < ErrorInfo.Error.length; i++) {
+                                    Hatalar += ErrorInfo.Error[i] + '</br>';
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: ErrorInfo.ErrorDescription,
+                                    html: Hatalar
+                                })
+
+
+                            }
+                        },
+                        error: function (err) {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: "HATA OLUŞTU. TEKRAR DENEYİNİZ.",
+                            })
+                        }
+                    });
+                }
+            })
+        });
+
+    })
+
+</script>
